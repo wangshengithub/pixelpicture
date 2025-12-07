@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随缘画 - 用画名生成抽象艺术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        input[type="text"] {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 250px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        select {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        canvas {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .footer {
+            text-align: center;
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input[type="text"], select, button {
+                width: 100%;
+            }
+
+            .canvas-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>随缘画</h1>
+        <p class="subtitle">输入画名，生成独一无二的抽象艺术</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="paintingName">画名</label>
+                <input type="text" id="paintingName" placeholder="输入画名，例如：星空、海洋、梦境..." value="星空">
+            </div>
+
+            <div class="control-group">
+                <label for="resolution">分辨率</label>
+                <select id="resolution">
+                    <option value="360">360P (640×360)</option>
+                    <option value="480">480P (854×480)</option>
+                    <option value="720" selected>720P (1280×720)</option>
+                    <option value="1080">1080P (1920×1080)</option>
+                </select>
+            </div>
+
+            <button id="generateBtn" type="button">生成画作</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="footer">
+            <p>每一个画名都是独一无二的艺术种子</p>
+        </div>
+    </div>
+
+    <script>
+        // 基于画名生成种子
+        function hashString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+
+        // 基于种子的随机数生成器
+        class Random {
+            constructor(seed) {
+                this.seed = seed;
+            }
+
+            next() {
+                const x = Math.sin(this.seed++) * 10000;
+                return x - Math.floor(x);
+            }
+
+            int(min, max) {
+                return Math.floor(this.next() * (max - min + 1)) + min;
+            }
+
+            float(min, max) {
+                return this.next() * (max - min) + min;
+            }
+
+            choice(arr) {
+                return arr[Math.floor(this.next() * arr.length)];
+            }
+        }
+
+        // 颜色生成函数
+        function generateColor(random) {
+            const hue = random.float(0, 360);
+            const saturation = random.float(60, 100);
+            const lightness = random.float(40, 70);
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        // 生成渐变
+        function createGradient(ctx, x1, y1, x2, y2, color1, color2) {
+            const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            return gradient;
+        }
+
+        // 绘制抽象画
+        function drawAbstractArt(canvas, seed, resolution) {
+            const ctx = canvas.getContext('2d');
+            const random = new Random(seed);
+            
+            // 根据分辨率设置Canvas尺寸
+            const resolutions = {
+                360: { width: 640, height: 360 },
+                480: { width: 854, height: 480 },
+                720: { width: 1280, height: 720 },
+                1080: { width: 1920, height: 1080 }
+            };
+            
+            const { width, height } = resolutions[resolution];
+            canvas.width = width;
+            canvas.height = height;
+            
+            // 清空画布
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, width, height);
+            
+            // 生成背景
+            const bgColor1 = generateColor(random);
+            const bgColor2 = generateColor(random);
+            const bgGradient = createGradient(ctx, 0, 0, width, height, bgColor1, bgColor2);
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // 绘制随机形状
+            const shapeCount = random.int(50, 200);
+            
+            for (let i = 0; i < shapeCount; i++) {
+                // 随机选择形状类型
+                const shapeType = random.choice(['circle', 'rect', 'line', 'curve']);
+                
+                // 设置随机颜色
+                const color1 = generateColor(random);
+                const color2 = generateColor(random);
+                
+                // 随机透明度
+                ctx.globalAlpha = random.float(0.1, 0.8);
+                
+                switch (shapeType) {
+                    case 'circle':
+                        const cx = random.float(0, width);
+                        const cy = random.float(0, height);
+                        const radius = random.float(10, 100);
+                        
+                        const circleGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+                        circleGradient.addColorStop(0, color1);
+                        circleGradient.addColorStop(1, color2);
+                        
+                        ctx.fillStyle = circleGradient;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                    
+                    case 'rect':
+                        const rx = random.float(0, width);
+                        const ry = random.float(0, height);
+                        const rw = random.float(20, 150);
+                        const rh = random.float(20, 150);
+                        const rotation = random.float(0, Math.PI * 2);
+                        
+                        const rectGradient = createGradient(ctx, rx, ry, rx + rw, ry + rh, color1, color2);
+                        
+                        ctx.fillStyle = rectGradient;
+                        ctx.save();
+                        ctx.translate(rx + rw / 2, ry + rh / 2);
+                        ctx.rotate(rotation);
+                        ctx.fillRect(-rw / 2, -rh / 2, rw, rh);
+                        ctx.restore();
+                        break;
+                    
+                    case 'line':
+                        const x1 = random.float(0, width);
+                        const y1 = random.float(0, height);
+                        const x2 = random.float(0, width);
+                        const y2 = random.float(0, height);
+                        
+                        const lineGradient = createGradient(ctx, x1, y1, x2, y2, color1, color2);
+                        
+                        ctx.strokeStyle = lineGradient;
+                        ctx.lineWidth = random.float(1, 5);
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                        break;
+                    
+                    case 'curve':
+                        const cx1 = random.float(0, width);
+                        const cy1 = random.float(0, height);
+                        const cx2 = random.float(0, width);
+                        const cy2 = random.float(0, height);
+                        const cx3 = random.float(0, width);
+                        const cy3 = random.float(0, height);
+                        const cx4 = random.float(0, width);
+                        const cy4 = random.float(0, height);
+                        
+                        const curveGradient = createGradient(ctx, cx1, cy1, cx4, cy4, color1, color2);
+                        
+                        ctx.strokeStyle = curveGradient;
+                        ctx.lineWidth = random.float(1, 5);
+                        ctx.beginPath();
+                        ctx.moveTo(cx1, cy1);
+                        ctx.bezierCurveTo(cx2, cy2, cx3, cy3, cx4, cy4);
+                        ctx.stroke();
+                        break;
+                }
+            }
+            
+            // 绘制噪波纹理
+            ctx.globalAlpha = 0.2;
+            for (let i = 0; i < width * height * 0.001; i++) {
+                const x = random.float(0, width);
+                const y = random.float(0, height);
+                const size = random.float(1, 3);
+                ctx.fillStyle = generateColor(random);
+                ctx.fillRect(x, y, size, size);
+            }
+            
+            // 重置透明度
+            ctx.globalAlpha = 1;
+        }
+
+        // 初始化页面
+        function init() {
+            const canvas = document.getElementById('canvas');
+            const paintingNameInput = document.getElementById('paintingName');
+            const resolutionSelect = document.getElementById('resolution');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            // 生成默认画作
+            const defaultSeed = hashString('星空');
+            drawAbstractArt(canvas, defaultSeed, 720);
+            
+            // 生成按钮点击事件
+            generateBtn.addEventListener('click', () => {
+                const name = paintingNameInput.value || '随机画作';
+                const resolution = parseInt(resolutionSelect.value);
+                const seed = hashString(name);
+                drawAbstractArt(canvas, seed, resolution);
+            });
+            
+            // 输入框回车事件
+            paintingNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    generateBtn.click();
+                }
+            });
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
