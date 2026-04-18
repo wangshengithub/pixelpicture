@@ -11,9 +11,25 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #667eea;
+            --text-primary: #4a5568;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --bg-light: #f7fafc;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 15px 40px rgba(0, 0, 0, 0.25);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -26,14 +42,14 @@
             max-width: 1200px;
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
+            border-radius: var(--radius-lg);
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-md);
         }
 
         h1 {
             text-align: center;
-            color: #4a5568;
+            color: var(--text-primary);
             margin-bottom: 10px;
             font-size: 2.5rem;
             font-weight: 700;
@@ -41,7 +57,7 @@
 
         .subtitle {
             text-align: center;
-            color: #718096;
+            color: var(--text-secondary);
             margin-bottom: 30px;
             font-size: 1.1rem;
         }
@@ -50,99 +66,190 @@
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             justify-content: center;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
+            min-width: 200px;
         }
 
         label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #4a5568;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
+        }
+
+        input[type="text"], select {
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
         }
 
         input[type="text"] {
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
             min-width: 250px;
         }
 
-        input[type="text"]:focus {
+        input[type="text"]:focus, select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        select {
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
         }
 
         button {
             padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        button:active {
+        button:active:not(:disabled) {
             transform: translateY(0);
         }
 
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .canvas-container {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f7fafc;
-            border-radius: 12px;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
             padding: 20px;
             margin-bottom: 20px;
             overflow: hidden;
+            min-height: 400px;
         }
 
         canvas {
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
             max-width: 100%;
             height: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
         }
 
         .footer {
             text-align: center;
-            color: #718096;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-top: 20px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2d3748;
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #48bb78;
+        }
+
+        .toast.error {
+            background: #f56565;
         }
 
         @media (max-width: 768px) {
@@ -154,17 +261,50 @@
                 font-size: 2rem;
             }
 
+            .subtitle {
+                font-size: 1rem;
+            }
+
             .controls {
                 flex-direction: column;
                 align-items: stretch;
             }
 
-            input[type="text"], select, button {
+            .control-group {
                 width: 100%;
+            }
+
+            input[type="text"], select {
+                width: 100%;
+            }
+
+            .button-group {
+                width: 100%;
+                justify-content: center;
+            }
+
+            button {
+                flex: 1;
+                min-width: 140px;
             }
 
             .canvas-container {
                 padding: 10px;
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .canvas-container {
+                min-height: 250px;
             }
         }
     </style>
@@ -177,12 +317,12 @@
         <div class="controls">
             <div class="control-group">
                 <label for="paintingName">画名</label>
-                <input type="text" id="paintingName" placeholder="输入画名，例如：星空、海洋、梦境..." value="星空">
+                <input type="text" id="paintingName" placeholder="输入画名，例如：星空、海洋、梦境..." value="星空" aria-label="画名输入框">
             </div>
 
             <div class="control-group">
                 <label for="resolution">分辨率</label>
-                <select id="resolution">
+                <select id="resolution" aria-label="分辨率选择">
                     <option value="360">360P (640×360)</option>
                     <option value="480">480P (854×480)</option>
                     <option value="720" selected>720P (1280×720)</option>
@@ -190,11 +330,22 @@
                 </select>
             </div>
 
-            <button id="generateBtn" type="button">生成画作</button>
+            <div class="button-group">
+                <button id="generateBtn" type="button" aria-label="生成画作">
+                    <span>🎨</span> 生成画作
+                </button>
+                <button id="downloadBtn" type="button" class="secondary" aria-label="下载画作">
+                    <span>💾</span> 下载画作
+                </button>
+            </div>
         </div>
 
         <div class="canvas-container">
-            <canvas id="canvas"></canvas>
+            <canvas id="canvas" aria-label="艺术画作展示区域"></canvas>
+            <div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+                <div class="spinner"></div>
+                <div class="loading-text">正在绘制中...</div>
+            </div>
         </div>
 
         <div class="footer">
@@ -203,26 +354,45 @@
     </div>
 
     <script>
-        // 基于画名生成种子
+        // 配置常量
+        const CONFIG = {
+            RESOLUTIONS: {
+                360: { width: 640, height: 360 },
+                480: { width: 854, height: 480 },
+                720: { width: 1280, height: 720 },
+                1080: { width: 1920, height: 1080 }
+            },
+            SHAPES: ['circle', 'rect', 'line', 'curve'],
+            MIN_SHAPES: 50,
+            MAX_SHAPES: 200,
+            NOISE_DENSITY: 0.001,
+            TOAST_DURATION: 3000
+        };
+
+        // 改进的哈希函数 - 使用更均匀的分布算法
         function hashString(str) {
             let hash = 0;
+            const prime = 31;
             for (let i = 0; i < str.length; i++) {
                 const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
+                hash = ((hash * prime) + char) & 0x7fffffff;
             }
-            return Math.abs(hash);
+            // 确保种子为正数且足够大
+            return hash > 0 ? hash : hash + 0x7fffffff;
         }
 
-        // 基于种子的随机数生成器
+        // 改进的随机数生成器 - 使用 Mulberry32 算法
         class Random {
             constructor(seed) {
-                this.seed = seed;
+                this.seed = seed >>> 0; // 确保是无符号 32 位整数
             }
 
             next() {
-                const x = Math.sin(this.seed++) * 10000;
-                return x - Math.floor(x);
+                // Mulberry32 算法 - 更好的随机性和周期性
+                let t = this.seed += 0x6D2B79F5;
+                t = Math.imul(t ^ t >>> 15, t | 1);
+                t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
             }
 
             int(min, max) {
@@ -254,20 +424,45 @@
             return gradient;
         }
 
-        // 绘制抽象画
-        function drawAbstractArt(canvas, seed, resolution) {
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 显示 Toast 提示
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 触发动画
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            // 自动消失
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, CONFIG.TOAST_DURATION);
+        }
+
+        // 分帧绘制抽象画
+        async function drawAbstractArt(canvas, seed, resolution) {
             const ctx = canvas.getContext('2d');
             const random = new Random(seed);
             
-            // 根据分辨率设置Canvas尺寸
-            const resolutions = {
-                360: { width: 640, height: 360 },
-                480: { width: 854, height: 480 },
-                720: { width: 1280, height: 720 },
-                1080: { width: 1920, height: 1080 }
-            };
-            
-            const { width, height } = resolutions[resolution];
+            // 根据分辨率设置 Canvas 尺寸
+            const { width, height } = CONFIG.RESOLUTIONS[resolution];
             canvas.width = width;
             canvas.height = height;
             
@@ -283,93 +478,105 @@
             ctx.fillRect(0, 0, width, height);
             
             // 绘制随机形状
-            const shapeCount = random.int(50, 200);
+            const shapeCount = random.int(CONFIG.MIN_SHAPES, CONFIG.MAX_SHAPES);
+            const batchSize = Math.ceil(shapeCount / 10); // 分 10 批绘制
             
-            for (let i = 0; i < shapeCount; i++) {
-                // 随机选择形状类型
-                const shapeType = random.choice(['circle', 'rect', 'line', 'curve']);
+            for (let batch = 0; batch < 10; batch++) {
+                const start = batch * batchSize;
+                const end = Math.min(start + batchSize, shapeCount);
                 
-                // 设置随机颜色
-                const color1 = generateColor(random);
-                const color2 = generateColor(random);
+                for (let i = start; i < end; i++) {
+                    // 随机选择形状类型
+                    const shapeType = random.choice(CONFIG.SHAPES);
+                    
+                    // 设置随机颜色
+                    const color1 = generateColor(random);
+                    const color2 = generateColor(random);
+                    
+                    // 随机透明度
+                    ctx.globalAlpha = random.float(0.1, 0.8);
+                    
+                    switch (shapeType) {
+                        case 'circle':
+                            const cx = random.float(0, width);
+                            const cy = random.float(0, height);
+                            const radius = random.float(10, 100);
+                            
+                            const circleGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+                            circleGradient.addColorStop(0, color1);
+                            circleGradient.addColorStop(1, color2);
+                            
+                            ctx.fillStyle = circleGradient;
+                            ctx.beginPath();
+                            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                            ctx.fill();
+                            break;
+                        
+                        case 'rect':
+                            const rx = random.float(0, width);
+                            const ry = random.float(0, height);
+                            const rw = random.float(20, 150);
+                            const rh = random.float(20, 150);
+                            const rotation = random.float(0, Math.PI * 2);
+                            
+                            const rectGradient = createGradient(ctx, rx, ry, rx + rw, ry + rh, color1, color2);
+                            
+                            ctx.fillStyle = rectGradient;
+                            ctx.save();
+                            ctx.translate(rx + rw / 2, ry + rh / 2);
+                            ctx.rotate(rotation);
+                            ctx.fillRect(-rw / 2, -rh / 2, rw, rh);
+                            ctx.restore();
+                            break;
+                        
+                        case 'line':
+                            const x1 = random.float(0, width);
+                            const y1 = random.float(0, height);
+                            const x2 = random.float(0, width);
+                            const y2 = random.float(0, height);
+                            
+                            const lineGradient = createGradient(ctx, x1, y1, x2, y2, color1, color2);
+                            
+                            ctx.strokeStyle = lineGradient;
+                            ctx.lineWidth = random.float(1, 5);
+                            ctx.beginPath();
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                            ctx.stroke();
+                            break;
+                        
+                        case 'curve':
+                            const cx1 = random.float(0, width);
+                            const cy1 = random.float(0, height);
+                            const cx2 = random.float(0, width);
+                            const cy2 = random.float(0, height);
+                            const cx3 = random.float(0, width);
+                            const cy3 = random.float(0, height);
+                            const cx4 = random.float(0, width);
+                            const cy4 = random.float(0, height);
+                            
+                            const curveGradient = createGradient(ctx, cx1, cy1, cx4, cy4, color1, color2);
+                            
+                            ctx.strokeStyle = curveGradient;
+                            ctx.lineWidth = random.float(1, 5);
+                            ctx.beginPath();
+                            ctx.moveTo(cx1, cy1);
+                            ctx.bezierCurveTo(cx2, cy2, cx3, cy3, cx4, cy4);
+                            ctx.stroke();
+                            break;
+                    }
+                }
                 
-                // 随机透明度
-                ctx.globalAlpha = random.float(0.1, 0.8);
-                
-                switch (shapeType) {
-                    case 'circle':
-                        const cx = random.float(0, width);
-                        const cy = random.float(0, height);
-                        const radius = random.float(10, 100);
-                        
-                        const circleGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-                        circleGradient.addColorStop(0, color1);
-                        circleGradient.addColorStop(1, color2);
-                        
-                        ctx.fillStyle = circleGradient;
-                        ctx.beginPath();
-                        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        break;
-                    
-                    case 'rect':
-                        const rx = random.float(0, width);
-                        const ry = random.float(0, height);
-                        const rw = random.float(20, 150);
-                        const rh = random.float(20, 150);
-                        const rotation = random.float(0, Math.PI * 2);
-                        
-                        const rectGradient = createGradient(ctx, rx, ry, rx + rw, ry + rh, color1, color2);
-                        
-                        ctx.fillStyle = rectGradient;
-                        ctx.save();
-                        ctx.translate(rx + rw / 2, ry + rh / 2);
-                        ctx.rotate(rotation);
-                        ctx.fillRect(-rw / 2, -rh / 2, rw, rh);
-                        ctx.restore();
-                        break;
-                    
-                    case 'line':
-                        const x1 = random.float(0, width);
-                        const y1 = random.float(0, height);
-                        const x2 = random.float(0, width);
-                        const y2 = random.float(0, height);
-                        
-                        const lineGradient = createGradient(ctx, x1, y1, x2, y2, color1, color2);
-                        
-                        ctx.strokeStyle = lineGradient;
-                        ctx.lineWidth = random.float(1, 5);
-                        ctx.beginPath();
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                        ctx.stroke();
-                        break;
-                    
-                    case 'curve':
-                        const cx1 = random.float(0, width);
-                        const cy1 = random.float(0, height);
-                        const cx2 = random.float(0, width);
-                        const cy2 = random.float(0, height);
-                        const cx3 = random.float(0, width);
-                        const cy3 = random.float(0, height);
-                        const cx4 = random.float(0, width);
-                        const cy4 = random.float(0, height);
-                        
-                        const curveGradient = createGradient(ctx, cx1, cy1, cx4, cy4, color1, color2);
-                        
-                        ctx.strokeStyle = curveGradient;
-                        ctx.lineWidth = random.float(1, 5);
-                        ctx.beginPath();
-                        ctx.moveTo(cx1, cy1);
-                        ctx.bezierCurveTo(cx2, cy2, cx3, cy3, cx4, cy4);
-                        ctx.stroke();
-                        break;
+                // 每批之间短暂等待，让出主线程
+                if (batch < 9) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
                 }
             }
             
             // 绘制噪波纹理
             ctx.globalAlpha = 0.2;
-            for (let i = 0; i < width * height * 0.001; i++) {
+            const noiseCount = Math.floor(width * height * CONFIG.NOISE_DENSITY);
+            for (let i = 0; i < noiseCount; i++) {
                 const x = random.float(0, width);
                 const y = random.float(0, height);
                 const size = random.float(1, 3);
@@ -381,35 +588,85 @@
             ctx.globalAlpha = 1;
         }
 
+        // 下载画作
+        function downloadCanvas(canvas, filename) {
+            try {
+                const link = document.createElement('a');
+                link.download = `${filename}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('画作已下载！', 'success');
+            } catch (error) {
+                console.error('下载失败:', error);
+                showToast('下载失败，请重试', 'error');
+            }
+        }
+
         // 初始化页面
         function init() {
             const canvas = document.getElementById('canvas');
             const paintingNameInput = document.getElementById('paintingName');
             const resolutionSelect = document.getElementById('resolution');
             const generateBtn = document.getElementById('generateBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const loadingOverlay = document.getElementById('loadingOverlay');
             
             // 生成默认画作
             const defaultSeed = hashString('星空');
             drawAbstractArt(canvas, defaultSeed, 720);
             
             // 生成按钮点击事件
-            generateBtn.addEventListener('click', () => {
-                const name = paintingNameInput.value || '随机画作';
+            const handleGenerate = async () => {
+                const name = paintingNameInput.value.trim() || '随机画作';
                 const resolution = parseInt(resolutionSelect.value);
                 const seed = hashString(name);
-                drawAbstractArt(canvas, seed, resolution);
-            });
+                
+                // 显示加载状态
+                loadingOverlay.classList.add('active');
+                generateBtn.disabled = true;
+                
+                try {
+                    // 使用 setTimeout 让 UI 有机会更新
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                    await drawAbstractArt(canvas, seed, resolution);
+                    showToast(`"${name}" 画作生成成功！`, 'success');
+                } catch (error) {
+                    console.error('生成失败:', error);
+                    showToast('生成失败，请重试', 'error');
+                } finally {
+                    loadingOverlay.classList.remove('active');
+                    generateBtn.disabled = false;
+                }
+            };
+
+            generateBtn.addEventListener('click', handleGenerate);
             
             // 输入框回车事件
             paintingNameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    generateBtn.click();
+                    handleGenerate();
                 }
             });
+            
+            // 下载按钮点击事件
+            downloadBtn.addEventListener('click', () => {
+                if (!canvas.width || !canvas.height) {
+                    showToast('请先生成画作', 'error');
+                    return;
+                }
+                const name = paintingNameInput.value.trim() || '随缘画';
+                const timestamp = new Date().getTime();
+                downloadCanvas(canvas, `${name}_${timestamp}`);
+            });
+            
+            // 分辨率改变时重新生成（带防抖）
+            const debouncedGenerate = debounce(handleGenerate, 300);
+            resolutionSelect.addEventListener('change', debouncedGenerate);
         }
 
         // 页面加载完成后初始化
         window.addEventListener('load', init);
     </script>
-</body>
+
+    </body>
 </html>
